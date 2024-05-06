@@ -39,3 +39,14 @@ app.get('/personagens', async (req, res) => {
         res.status(500).send('Erro ao obter personagens');
     }
 });
+
+app.post('/personagens' , async (req, res) => {
+    try {
+        const { nome, poder, arma, forca, vida } = req.body;
+        await poll.query('INSERT INTO personagens (nome, poder, arma, forca, vida) VALUES ($1, $2, $3, $4, $5)', [nome, poder, arma, forca, vida]);
+        res.status(201).send({ mensagem: 'Sucesso ao cadastrar personagem' })
+    } catch (error) {
+        console.error('Erro ao cadastrar personagem', error);
+        res.status(500).send('Erro ao cadastrar personagem');
+    }
+});
