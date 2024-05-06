@@ -33,4 +33,4 @@ INSERT INTO personagens (nome, poder, arma, forca, vida) VALUES ('Chucky', 'Poss
 INSERT INTO personagens (nome, poder, arma, forca, vida) VALUES ('Ghostface', 'Stalking', 'Faca e Câmera', 85, 88);
 INSERT INTO personagens (nome, poder, arma, forca, vida) VALUES ('Jigsaw', 'Jogos Mentais', 'Armadilhas', 85, 90);
 INSERT INTO personagens (nome, poder, arma, forca, vida) VALUES ('Samara Morgan', 'Maldição', 'Televisão', 80, 85);
-INSERT INTO personagens (nome, poder, arma, forca, vida) VALUES ('Nêmesis', 'Trembolona', 'Tentáculos e Punhos', 85, 88);
+INSERT INTO personagens (nome, poder, arma, forca, vida) VALUES ('Nemesis', 'Trembolona', 'Tentáculos e Punhos', 85, 88);
