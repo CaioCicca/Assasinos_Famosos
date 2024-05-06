@@ -73,3 +73,11 @@ app.delete('/personagens/:id', async (req, res) => {
         res.status(500).send('Erro ao deletar personagem');
     }
 });
+
+app.get('/', (req, res) => {
+    res.send('Server OK');
+});
+
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+});
