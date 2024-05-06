@@ -62,3 +62,14 @@ app.put('/personagens/:id', async (req, res) => {
         res.status(500).send('Erro ao atualizar personagem');
     }
 });
+
+app.delete('/personagens/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        await poll.query('DELETE FROM personagens WHERE id = $1', [id]);
+        res.status(200).send({ mensagem: 'Sucesso ao deletar personagem' })
+    } catch (error) {
+        console.error('Erro ao deletar personagem', error);
+        res.status(500).send('Erro ao deletar personagem');
+    }
+});
