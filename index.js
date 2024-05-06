@@ -50,3 +50,15 @@ app.post('/personagens' , async (req, res) => {
         res.status(500).send('Erro ao cadastrar personagem');
     }
 });
+
+app.put('/personagens/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { nome, poder, arma, forca, vida } = req.body;
+        await poll.query('UPDATE personagens SET nome = $1, poder = $2, arma = $3, forca = $4, vida = $5 WHERE id = $6', [nome, poder, arma, forca, vida, id]);
+        res.status(200).send({ mensagem: 'Sucesso ao atualizar personagem' })
+    } catch (error) {
+        console.error('Erro ao atualizar personagem', error);
+        res.status(500).send('Erro ao atualizar personagem');
+    }
+});
