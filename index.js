@@ -14,6 +14,21 @@ const poll = new Pool({
     port: 7007
 });
 
+app.get('/batalha/:id_1/:id_2', async (req, res) => {
+    const { id_1 } = req.params
+    const { id_2 } = req.params;
+
+    const personagem_1_forca = await poll.query('SELECT forca FROM personagem WHERE id = $1',[id_1]);
+    const personagem_1_vida = await poll.query('SELECT vida FROM personagem WHERE id = $1',[id_1]);
+    const valor_batalha_1 = personagem_1_forca + personagem_1_vida;
+
+    const personagem_2_forca = await poll.query('SELECT forca FROM personagem WHERE id = $1',[id_2]);
+    const personagem_2_vida = await poll.query('SELECT vida FROM personagem WHERE id = $1',[id_2]);
+    const valor_batalha_2 = personagem_2_forca + personagem_2_vida;
+
+    
+});
+
 app.get('/personagens', async (req, res) => {
     try {
         const { nome } = req.query;
@@ -37,6 +52,19 @@ app.get('/personagens', async (req, res) => {
     } catch (error) {
         console.error('Erro ao obter personagens', error);
         res.status(500).send('Erro ao obter personagens');
+    }
+});
+
+app.get('/personagens/:id', async (req, res) => {
+    try {
+        const { id } = req.params.id;
+        const resultado = await poll.query('SELECT * FROM personagens WHERE id = $1', [id]);
+        res.json({
+            cadastros: resultado.rows
+        });
+    } catch (error) {
+        console.error('Erro ao obter o personagem');
+        res.status(500).send('Erro ao obter o personagem');
     }
 });
 
