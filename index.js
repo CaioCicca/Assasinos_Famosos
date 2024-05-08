@@ -14,19 +14,79 @@ const poll = new Pool({
     port: 7007
 });
 
+app.get('/batalha', async (req, res) => {
+    try {
+        let query;
+        let params;
+
+        if (req.query.nome) {
+            query = 'SELECT tb.id,  tb.id_1, tb.id_2, tb.vencedor, tp.nome, tp.poder, tp.arma, tp.forca, tp.vida FROM personagens tp INNER JOIN batalhas tb ON tb.vencedor = tp.id WHERE tp.nome ILIKE $1';
+            params = [req.query.nome];
+        } else {
+            query = 'SELECT tb.id_1, tb.id_2, tb.vencedor, tp.nome, tp.poder, tp.arma, tp.forca, tp.vida FROM personagens tp INNER JOIN batalhas tb ON tb.vencedor = tp.id';
+            params = [];
+        }
+
+        const resultado = await poll.query(query, params);
+
+        res.json({
+            total: resultado.rowCount,
+            batalhas: resultado.rows
+        });
+    } catch (error) {
+        console.error('Erro ao obter batalhas', error);
+        res.status(500).send('Erro ao obter batalhas');
+    }
+});
+
+
 app.get('/batalha/:id_1/:id_2', async (req, res) => {
-    const { id_1 } = req.params
-    const { id_2 } = req.params;
+    try {
+        const { id_1 } = req.params
+        const { id_2 } = req.params;
 
-    const personagem_1_forca = await poll.query('SELECT forca FROM personagem WHERE id = $1',[id_1]);
-    const personagem_1_vida = await poll.query('SELECT vida FROM personagem WHERE id = $1',[id_1]);
-    const valor_batalha_1 = personagem_1_forca + personagem_1_vida;
+        if (id_1 !== id_2) {
+            let personagem_1 = await poll.query('SELECT * FROM personagens WHERE id = $1', [id_1]);
+            personagem_1 = personagem_1.rows[0];
+            const valor_batalha_1 = personagem_1.forca + personagem_1.vida;
 
-    const personagem_2_forca = await poll.query('SELECT forca FROM personagem WHERE id = $1',[id_2]);
-    const personagem_2_vida = await poll.query('SELECT vida FROM personagem WHERE id = $1',[id_2]);
-    const valor_batalha_2 = personagem_2_forca + personagem_2_vida;
+            let personagem_2 = await poll.query('SELECT * FROM personagens WHERE id = $1', [id_2]);
+            personagem_2 = personagem_2.rows[0];
+            const valor_batalha_2 = personagem_2.forca + personagem_2.vida;
 
-    
+            if (valor_batalha_1 > valor_batalha_2) {
+                res.json({
+                    vencedor: id_1, 
+                    nome: personagem_1.nome,
+                    poder: personagem_1.poder,
+                    arma: personagem_1.arma,
+                    forca: personagem_1.forca,
+                    vida: personagem_1.vida
+                });
+                await poll.query('INSERT INTO batalhas (id_1, id_2, vencedor) VALUES ($1, $2, $3)', [id_1, id_2, personagem_1.id]);
+            } else if (valor_batalha_1 < valor_batalha_2) {
+                res.json({
+                    vencedor: id_2,
+                    nome: personagem_2.nome,
+                    poder: personagem_2.poder,
+                    arma: personagem_2.arma,
+                    forca: personagem_2.forca,
+                    vida: personagem_2.vida
+                });
+                await poll.query('INSERT INTO batalhas (id_1, id_2, vencedor) VALUES ($1, $2, $3)', [id_1, id_2, personagem_2.id])
+            } else {
+                res.json({
+                    empate: true
+                });
+                await poll.query('INSERT INTO batalhas (id_1, id_2, vencedor) VALUES ($1, $2, $3)', [id_1, id_2, undefined])
+            }
+        } else {
+            res.status(500).send('Selecione dois personagens diferentes ')
+        }
+    } catch (error) {
+        console.error('Erro ao batalhar personagens', error);
+        res.status(500).send('Erro ao batalhar personagens');
+    }
 });
 
 app.get('/personagens', async (req, res) => {
@@ -68,7 +128,7 @@ app.get('/personagens/:id', async (req, res) => {
     }
 });
 
-app.post('/personagens' , async (req, res) => {
+app.post('/personagens', async (req, res) => {
     try {
         const { nome, poder, arma, forca, vida } = req.body;
         await poll.query('INSERT INTO personagens (nome, poder, arma, forca, vida) VALUES ($1, $2, $3, $4, $5)', [nome, poder, arma, forca, vida]);
