@@ -1,5 +1,7 @@
 # Terror Battle
 
+![Terror Battle Logo](./ghostface-reveal-trailer-ijase6qc1jfe9f4d.jpg)
+
 Bem-vindo ao mundo sombrio e intrigante de "Terror Battle", um jogo de batalhas entre personagens lendários dos mais famosos filmes de terror. Em "Terror Battle", os jogadores mergulham em confrontos épicos entre ícones do horror, onde o medo é palpável e a sobrevivência é tudo.
 
 ## Sobre o Jogo
